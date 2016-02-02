@@ -9,7 +9,7 @@
 namespace Hoathis\CAuth;
 
 
-class CAuth2
+final class CAuth2
 {
     const ELEMENT_VOID = '<void/>';
 

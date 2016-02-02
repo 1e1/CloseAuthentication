@@ -9,7 +9,7 @@
 namespace Hoathis\CAuth;
 
 
-class Form
+final class Form
 {
 
     /**

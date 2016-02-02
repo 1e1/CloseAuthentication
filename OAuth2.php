@@ -9,7 +9,7 @@
 namespace Hoathis\CAuth;
 
 
-class OAuth2
+final class OAuth2
 {
     const DEFAULT_METHOD = 'post';
     const MARGIN_TIME = 30;

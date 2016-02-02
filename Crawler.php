@@ -9,7 +9,7 @@
 namespace Hoathis\CAuth;
 
 
-class Crawler
+final class Crawler
 {
     const STATE_HASH = 'SHA512';
 

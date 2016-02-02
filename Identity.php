@@ -9,7 +9,7 @@
 namespace Hoathis\CAuth;
 
 
-class Identity
+final class Identity
 {
     /**
      * @var string
