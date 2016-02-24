@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: AyGLR
@@ -69,9 +71,9 @@ final class Crawler
     protected $curl;
 
     /**
-     * @return $this
+     * @return self
      */
-    public function load()
+    public function load(): self
     {
         $data = [
             'client_id'    => $this->client_id,
@@ -132,7 +134,7 @@ final class Crawler
      * @return \SimpleXMLElement
      * @throws NoFormException
      */
-    public function extractSimpleXmlForm($xpath = '//form')
+    public function extractSimpleXmlForm(string $xpath = '//form'): \SimpleXMLElement
     {
         $forms = $this->_source->xpath($xpath);
 
@@ -144,15 +146,15 @@ final class Crawler
     }
 
     /**
-     * @param       $method
-     * @param       $action
-     * @param array $data
-     * @return $this
+     * @param string $method
+     * @param string $action
+     * @param array  $data
+     * @return self
      * @throws ErrorException
      * @throws NoLocationException
      * @throws StateException
      */
-    public function submit($method, $action, array $data)
+    public function submit(string $method, string $action, array $data): self
     {
         $link       = $action;
         $parameters = http_build_query($data);
@@ -192,8 +194,9 @@ final class Crawler
         curl_setopt_array($this->curl, $options);
 
         $this->_code = null;
-        /*$source      =*/ curl_exec($this->curl);
-        $location    = curl_getinfo($this->curl, CURLINFO_REDIRECT_URL);
+        /*$source      =*/
+        curl_exec($this->curl);
+        $location = curl_getinfo($this->curl, CURLINFO_REDIRECT_URL);
 
         if (false === $location) {
             throw new NoLocationException();
@@ -237,9 +240,9 @@ final class Crawler
 
     /**
      * @param string $state
-     * @return $this
+     * @return self
      */
-    public function setState($state)
+    public function setState(string $state): self
     {
         $this->_state = $state;
 
@@ -249,16 +252,16 @@ final class Crawler
     /**
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
         return $this->baseUrl;
     }
 
     /**
      * @param string $baseUrl
-     * @return $this
+     * @return self
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl(string $baseUrl): self
     {
         $this->baseUrl = $baseUrl;
 
@@ -268,16 +271,16 @@ final class Crawler
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * @param string $path
-     * @return $this
+     * @return self
      */
-    public function setPath($path)
+    public function setPath(string $path): self
     {
         $this->path = $path;
 
@@ -286,9 +289,9 @@ final class Crawler
 
     /**
      * @param string $url
-     * @return $this
+     * @return self
      */
-    public function setUrl($url)
+    public function setUrl(string $url): self
     {
         $p = strpos($url, '/', 8);
         if (false === $p) {
@@ -305,7 +308,7 @@ final class Crawler
     /**
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->getBaseUrl() . $this->getPath();
     }
@@ -313,16 +316,16 @@ final class Crawler
     /**
      * @return string
      */
-    public function getClientId()
+    public function getClientId(): string
     {
         return $this->client_id;
     }
 
     /**
      * @param string $client_id
-     * @return $this
+     * @return self
      */
-    public function setClientId($client_id)
+    public function setClientId(string $client_id): self
     {
         $this->client_id = $client_id;
 
@@ -332,16 +335,16 @@ final class Crawler
     /**
      * @return string
      */
-    public function getRedirectUri()
+    public function getRedirectUri(): string
     {
         return $this->redirect_uri;
     }
 
     /**
      * @param string $redirect_uri
-     * @return $this
+     * @return self
      */
-    public function setRedirectUri($redirect_uri)
+    public function setRedirectUri(string $redirect_uri): self
     {
         $this->redirect_uri = $redirect_uri;
 
@@ -351,16 +354,16 @@ final class Crawler
     /**
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         return $this->scope;
     }
 
     /**
      * @param string $scope
-     * @return $this
+     * @return self
      */
-    public function setScope($scope)
+    public function setScope(string $scope): self
     {
         $this->scope = $scope;
 
@@ -370,7 +373,7 @@ final class Crawler
     /**
      * @return bool
      */
-    public function hasCode()
+    public function hasCode(): bool
     {
         return isset($this->_code);
     }
@@ -378,7 +381,7 @@ final class Crawler
     /**
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->_code;
     }

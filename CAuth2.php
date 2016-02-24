@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: AyGLR
@@ -34,9 +36,9 @@ final class CAuth2
     private $_source;
 
     /**
-     * @return CAuth2
+     * @return self
      */
-    public static function create()
+    public static function create(): self
     {
         return new self();
     }
@@ -56,10 +58,10 @@ final class CAuth2
      * @param string $url
      * @param string $clientId
      * @param string $scope
-     * @return $this
+     * @return self
      * @throws NoFormException
      */
-    public function open($url, $clientId, $scope = '')
+    public function open(string $url, string $clientId, string $scope = ''): self
     {
         $this->_source = new \SimpleXMLElement(self::ELEMENT_VOID);
 
@@ -78,13 +80,13 @@ final class CAuth2
     /**
      * @param array $completions
      * @param array $uninputs
-     * @return $this
+     * @return self
      * @throws ErrorException
      * @throws NoLocationException
      * @throws StateException
      * @throws \Exception
      */
-    public function submit(array $completions, array $uninputs = [])
+    public function submit(array $completions, array $uninputs = []): self
     {
         $this->form
             ->setSimpleXMLForm($this->_source)
@@ -120,16 +122,16 @@ final class CAuth2
     /**
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->crawler->getCode();
     }
 
     /**
-     * @param $message
-     * @return $this
+     * @param string $message
+     * @return self
      */
-    public function write($message)
+    public function write(string $message): self
     {
         echo $message, PHP_EOL;
 

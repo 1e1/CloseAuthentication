@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: AyGLR
@@ -13,7 +15,7 @@ final class Form
 {
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $completions;
 
@@ -40,7 +42,7 @@ final class Form
     public function __construct()
     {
         $this->completions = [];
-        $this->uninputs = [];
+        $this->uninputs    = [];
 
         $this
             ->setSimpleXMLForm(new \SimpleXMLElement('<void/>'))
@@ -49,9 +51,9 @@ final class Form
 
     /**
      * @param \SimpleXMLElement $xmlForm
-     * @return $this
+     * @return self
      */
-    public function setSimpleXMLForm(\SimpleXMLElement $xmlForm)
+    public function setSimpleXMLForm(\SimpleXMLElement $xmlForm): self
     {
         $this->xmlForm    = $xmlForm;
         $this->attributes = $this->xmlForm->attributes();
@@ -60,19 +62,19 @@ final class Form
     }
 
     /**
-     * @param $attribute
+     * @param string $attribute
      * @return bool
      */
-    public function hasAttribute($attribute)
+    public function hasAttribute(string $attribute): bool
     {
         return isset($this->attributes[$attribute]);
     }
 
     /**
-     * @param $attribute
+     * @param string $attribute
      * @return string
      */
-    public function getAttribute($attribute)
+    public function getAttribute(string $attribute): string
     {
         return isset($this->attributes[$attribute])
             ? '' . $this->attributes[$attribute]
@@ -80,10 +82,10 @@ final class Form
     }
 
     /**
-     * @param $inputXpath
-     * @return $this
+     * @param string $inputXpath
+     * @return self
      */
-    public function setInputXpath($inputXpath)
+    public function setInputXpath(string $inputXpath): self
     {
         $this->inputXpath = $inputXpath;
 
@@ -93,7 +95,7 @@ final class Form
     /**
      * @return string
      */
-    public function getInputXpath()
+    public function getInputXpath(): string
     {
         return $this->inputXpath;
     }
@@ -101,7 +103,7 @@ final class Form
     /**
      * @return \SimpleXMLElement[]
      */
-    public function getInputs()
+    public function getInputs(): array
     {
         return $this->xmlForm->xpath($this->inputXpath);
     }
@@ -110,7 +112,7 @@ final class Form
      * @param string $key
      * @return bool
      */
-    public function hasCompletion($key)
+    public function hasCompletion(string $key): bool
     {
         return isset($this->completions[$key]);
     }
@@ -118,9 +120,9 @@ final class Form
     /**
      * @param string $key
      * @param string $value
-     * @return $this
+     * @return self
      */
-    public function addCompletion($key, $value)
+    public function addCompletion(string $key, string $value): self
     {
         $this->completions[$key] = $value;
 
@@ -128,10 +130,10 @@ final class Form
     }
 
     /**
-     * @param array $completions
-     * @return $this
+     * @param string[] $completions
+     * @return self
      */
-    public function addCompletions(array $completions)
+    public function addCompletions(array $completions): self
     {
         $this->completions = $completions + $this->completions;
 
@@ -142,23 +144,26 @@ final class Form
      * @param string $name
      * @return bool
      */
-    public function hasInput($name)
+    public function hasInput(string $name): bool
     {
         return !isset($this->uninputs[$name]);
     }
 
     /**
      * @param string $name
-     * @return $this
+     * @return self
      */
-    public function removeInput($name)
+    public function removeInput(string $name): self
     {
         $this->uninputs[$name] = true;
 
         return $this;
     }
 
-    public function getData()
+    /**
+     * @return string[]
+     */
+    public function getData(): array
     {
         $data   = [];
         $inputs = $this->getInputs();

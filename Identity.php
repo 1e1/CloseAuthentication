@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: AyGLR
@@ -36,7 +37,10 @@ final class Identity
      */
     protected $tokenType;
 
-    public static function create()
+    /**
+     * @return self
+     */
+    public static function create(): self
     {
         return new self();
     }
@@ -44,16 +48,16 @@ final class Identity
     /**
      * @return string
      */
-    public function getAccessToken()
+    public function getAccessToken(): string
     {
         return $this->accessToken;
     }
 
     /**
      * @param string $accessToken
-     * @return Identity
+     * @return self
      */
-    public function setAccessToken($accessToken)
+    public function setAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
 
@@ -63,16 +67,16 @@ final class Identity
     /**
      * @return int
      */
-    public function getExpireAt()
+    public function getExpireAt(): int
     {
         return $this->expireAt;
     }
 
     /**
      * @param int $expireAt
-     * @return Identity
+     * @return self
      */
-    public function setExpireAt($expireAt)
+    public function setExpireAt(int $expireAt): self
     {
         $this->expireAt = $expireAt;
 
@@ -82,16 +86,16 @@ final class Identity
     /**
      * @return bool
      */
-    public function hasExpired()
+    public function hasExpired(): bool
     {
         return $this->expireAt < time();
     }
 
     /**
-     * @param $time
+     * @param int $time
      * @return bool
      */
-    public function willExpiredIn($time)
+    public function willExpiredIn(int $time): bool
     {
         return $this->expireAt < time() + $time;
     }
@@ -99,7 +103,7 @@ final class Identity
     /**
      * @return int
      */
-    public function getRemainingTime()
+    public function getRemainingTime(): int
     {
         return $this->expireAt - time();
     }
@@ -107,16 +111,16 @@ final class Identity
     /**
      * @return int
      */
-    public function getExpireIn()
+    public function getExpireIn(): int
     {
         return $this->expireIn;
     }
 
     /**
      * @param int $expireIn
-     * @return Identity
+     * @return self
      */
-    public function setExpireIn($expireIn)
+    public function setExpireIn(int $expireIn): self
     {
         $this->expireIn = $expireIn;
 
@@ -126,16 +130,16 @@ final class Identity
     /**
      * @return string
      */
-    public function getRefreshToken()
+    public function getRefreshToken(): string
     {
         return $this->refreshToken;
     }
 
     /**
      * @param string $refreshToken
-     * @return Identity
+     * @return self
      */
-    public function setRefreshToken($refreshToken)
+    public function setRefreshToken(string $refreshToken): self
     {
         $this->refreshToken = $refreshToken;
 
@@ -145,16 +149,16 @@ final class Identity
     /**
      * @return string
      */
-    public function getTokenType()
+    public function getTokenType(): self
     {
         return $this->tokenType;
     }
 
     /**
      * @param string $tokenType
-     * @return Identity
+     * @return self
      */
-    public function setTokenType($tokenType)
+    public function setTokenType(string $tokenType): self
     {
         $this->tokenType = $tokenType;
 

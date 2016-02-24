@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: AyGLR
@@ -45,9 +46,9 @@ final class OAuth2
     protected $path;
 
     /**
-     * @return OAuth2
+     * @return self
      */
-    public static function create()
+    public static function create(): self
     {
         return new self();
     }
@@ -68,9 +69,9 @@ final class OAuth2
     /**
      * @param string $code
      * @param string $method
-     * @return $this
+     * @return self
      */
-    public function authenticate($code, $method = self::DEFAULT_METHOD)
+    public function authenticate(string $code, string $method = self::DEFAULT_METHOD): self
     {
         $data = [
             'grant_type' => 'authorization_code',
@@ -85,9 +86,9 @@ final class OAuth2
     /**
      * @param bool   $force
      * @param string $method
-     * @return $this
+     * @return self
      */
-    public function refresh($force = false, $method = self::DEFAULT_METHOD)
+    public function refresh(bool $force = false, string $method = self::DEFAULT_METHOD): self
     {
         if (
             (true === $force) ||
@@ -105,11 +106,11 @@ final class OAuth2
     }
 
     /**
-     * @param array  $data
-     * @param string $method
-     * @return $this
+     * @param string[] $data
+     * @param string   $method
+     * @return self
      */
-    protected function loadIdentity(array $data, $method)
+    protected function loadIdentity(array $data, string $method): self
     {
         $this->identity = new Identity();
         $link           = $this->getUrl();
@@ -178,9 +179,9 @@ final class OAuth2
      * @param string $url
      * @param string $clientId
      * @param string $clientSecret
-     * @return $this
+     * @return self
      */
-    public function open($url, $clientId, $clientSecret)
+    public function open(string $url, string $clientId, string $clientSecret): self
     {
         $this
             ->setUrl($url)
@@ -194,7 +195,7 @@ final class OAuth2
      * @param string $method
      * @return string
      */
-    public function getAccessToken($method = self::DEFAULT_METHOD)
+    public function getAccessToken(string $method = self::DEFAULT_METHOD): string
     {
         return $this
             ->refresh(false, $method)
@@ -204,9 +205,9 @@ final class OAuth2
 
     /**
      * @param string $clientSecret
-     * @return OAuth2
+     * @return self
      */
-    public function setClientSecret($clientSecret)
+    public function setClientSecret(string $clientSecret): self
     {
         $this->_clientSecret = $clientSecret;
 
@@ -215,9 +216,9 @@ final class OAuth2
 
     /**
      * @param string $clientId
-     * @return OAuth2
+     * @return self
      */
-    public function setClientId($clientId)
+    public function setClientId(string $clientId): self
     {
         $this->_clientId = $clientId;
 
@@ -227,16 +228,16 @@ final class OAuth2
     /**
      * @return Identity
      */
-    public function getIdentity()
+    public function getIdentity(): Identity
     {
         return $this->identity;
     }
 
     /**
      * @param Identity $identity
-     * @return OAuth2
+     * @return self
      */
-    public function setIdentity(Identity $identity)
+    public function setIdentity(Identity $identity): self
     {
         $this->identity = $identity;
 
@@ -247,16 +248,16 @@ final class OAuth2
     /**
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
         return $this->baseUrl;
     }
 
     /**
      * @param string $baseUrl
-     * @return $this
+     * @return self
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl(string $baseUrl): self
     {
         $this->baseUrl = $baseUrl;
 
@@ -266,16 +267,16 @@ final class OAuth2
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * @param string $path
-     * @return $this
+     * @return self
      */
-    public function setPath($path)
+    public function setPath(string $path): self
     {
         $this->path = $path;
 
@@ -284,9 +285,9 @@ final class OAuth2
 
     /**
      * @param string $url
-     * @return $this
+     * @return self
      */
-    public function setUrl($url)
+    public function setUrl(string $url): self
     {
         $p = strpos($url, '/', 8);
         if (false === $p) {
@@ -303,7 +304,7 @@ final class OAuth2
     /**
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->getBaseUrl() . $this->getPath();
     }
