@@ -167,8 +167,8 @@ final class OAuth2
         $identity = json_decode($source, true);
         $this->identity
             ->setAccessToken($identity['access_token'])
-            ->setExpireAt($identity['expires_at'])
-            ->setExpireIn($identity['expires_in'])
+            ->setExpireAt((int) $identity['expires_at'])
+            ->setExpireIn((int) $identity['expires_in'])
             ->setRefreshToken($identity['refresh_token'])
             ->setTokenType($identity['token_type']);
 
