@@ -1,14 +1,14 @@
 <?php
-declare(strict_types = 1);
+
+declare (strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: AyGLR
  * Date: 24/01/16
- * Time: 00:56
+ * Time: 00:56.
  */
 
 namespace Hoathis\CAuth;
-
 
 final class OAuth2
 {
@@ -69,13 +69,14 @@ final class OAuth2
     /**
      * @param string $code
      * @param string $method
+     *
      * @return self
      */
     public function authenticate(string $code, string $method = self::DEFAULT_METHOD): self
     {
         $data = [
             'grant_type' => 'authorization_code',
-            'code'       => $code,
+            'code' => $code,
         ];
 
         $this->loadIdentity($data, $method);
@@ -86,6 +87,7 @@ final class OAuth2
     /**
      * @param bool   $force
      * @param string $method
+     *
      * @return self
      */
     public function refresh(bool $force = false, string $method = self::DEFAULT_METHOD): self
@@ -95,7 +97,7 @@ final class OAuth2
             ($this->identity->willExpiredIn(self::MARGIN_TIME))
         ) {
             $data = [
-                'grant_type'    => 'refresh_token',
+                'grant_type' => 'refresh_token',
                 'refresh_token' => $this->identity->getRefreshToken(),
             ];
 
@@ -108,46 +110,47 @@ final class OAuth2
     /**
      * @param string[] $data
      * @param string   $method
+     *
      * @return self
      */
     protected function loadIdentity(array $data, string $method): self
     {
         $this->identity = new Identity();
-        $link           = $this->getUrl();
-        $credentials    = $this->_clientId . ':' . $this->_clientSecret;
-        $parameters     = http_build_query($data);
+        $link = $this->getUrl();
+        $credentials = $this->_clientId.':'.$this->_clientSecret;
+        $parameters = http_build_query($data);
 
         $options = [
             CURLOPT_FOLLOWLOCATION => true,
             // CURLOPT_MAXREDIRS => 5,
-            CURLOPT_FORBID_REUSE   => true,
-            CURLOPT_HEADER         => false,
-            CURLOPT_HTTPAUTH       => CURLAUTH_BASIC,
-            CURLOPT_HTTPGET        => false,
-            CURLOPT_NETRC          => false,
-            CURLOPT_POST           => false,
-            CURLOPT_PUT            => false,
+            CURLOPT_FORBID_REUSE => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+            CURLOPT_HTTPGET => false,
+            CURLOPT_NETRC => false,
+            CURLOPT_POST => false,
+            CURLOPT_PUT => false,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_TIMEOUT => 5,
             //CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_URL            => $link,
+            CURLOPT_URL => $link,
             //CURLOPT_USERAGENT      => self::$USER_AGENT,
-            CURLOPT_USERPWD        => $credentials,
-            CURLOPT_HTTPHEADER     => [
+            CURLOPT_USERPWD => $credentials,
+            CURLOPT_HTTPHEADER => [
                 'Content-Type: application/x-www-form-urlencoded',
             ],
         ];
 
         switch ($method) {
             case 'post':
-                $options[CURLOPT_POST]       = true;
+                $options[CURLOPT_POST] = true;
                 $options[CURLOPT_POSTFIELDS] = $parameters;
                 break;
 
             default:
                 $options[CURLOPT_HTTPGET] = true;
-                $options[CURLOPT_URL]     = $link . '?' . $parameters;
+                $options[CURLOPT_URL] = $link.'?'.$parameters;
         }
 
         curl_setopt_array($this->curl, $options);
@@ -179,6 +182,7 @@ final class OAuth2
      * @param string $url
      * @param string $clientId
      * @param string $clientSecret
+     *
      * @return self
      */
     public function open(string $url, string $clientId, string $clientSecret): self
@@ -193,6 +197,7 @@ final class OAuth2
 
     /**
      * @param string $method
+     *
      * @return string
      */
     public function getAccessToken(string $method = self::DEFAULT_METHOD): string
@@ -205,6 +210,7 @@ final class OAuth2
 
     /**
      * @param string $clientSecret
+     *
      * @return self
      */
     public function setClientSecret(string $clientSecret): self
@@ -216,6 +222,7 @@ final class OAuth2
 
     /**
      * @param string $clientId
+     *
      * @return self
      */
     public function setClientId(string $clientId): self
@@ -235,6 +242,7 @@ final class OAuth2
 
     /**
      * @param Identity $identity
+     *
      * @return self
      */
     public function setIdentity(Identity $identity): self
@@ -243,7 +251,6 @@ final class OAuth2
 
         return $this;
     }
-
 
     /**
      * @return string
@@ -255,6 +262,7 @@ final class OAuth2
 
     /**
      * @param string $baseUrl
+     *
      * @return self
      */
     public function setBaseUrl(string $baseUrl): self
@@ -274,6 +282,7 @@ final class OAuth2
 
     /**
      * @param string $path
+     *
      * @return self
      */
     public function setPath(string $path): self
@@ -285,6 +294,7 @@ final class OAuth2
 
     /**
      * @param string $url
+     *
      * @return self
      */
     public function setUrl(string $url): self
@@ -306,8 +316,6 @@ final class OAuth2
      */
     public function getUrl(): string
     {
-        return $this->getBaseUrl() . $this->getPath();
+        return $this->getBaseUrl().$this->getPath();
     }
-
-
 }

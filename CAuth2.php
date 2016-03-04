@@ -1,15 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+declare (strict_types = 1);
 
 /**
  * Created by PhpStorm.
  * User: AyGLR
  * Date: 23/01/16
- * Time: 21:53
+ * Time: 21:53.
  */
 
 namespace Hoathis\CAuth;
-
 
 final class CAuth2
 {
@@ -49,8 +49,8 @@ final class CAuth2
     public function __construct()
     {
         $this->crawler = new Crawler();
-        $this->form    = new Form();
-        $this->xpath   = '//form';
+        $this->form = new Form();
+        $this->xpath = '//form';
         $this->_source = new \SimpleXMLElement(self::ELEMENT_VOID);
     }
 
@@ -58,10 +58,13 @@ final class CAuth2
      * @param string $url
      * @param string $clientId
      * @param string $scope
+     * @param string $redirectUri
+     *
      * @return self
+     *
      * @throws NoFormException
      */
-    public function open(string $url, string $clientId, string $scope = ''): self
+    public function open(string $url, string $clientId, string $scope = '', string $redirectUri = 'http://localhost'): self
     {
         $this->_source = new \SimpleXMLElement(self::ELEMENT_VOID);
 
@@ -69,7 +72,7 @@ final class CAuth2
             ->setUrl($url)
             ->setClientId($clientId)
             ->setScope($scope)
-            ->setRedirectUri('http://localhost');
+            ->setRedirectUri($redirectUri);
         $this->_source = $this->crawler
             ->load()
             ->extractSimpleXmlForm($this->xpath);
@@ -80,7 +83,9 @@ final class CAuth2
     /**
      * @param array $completions
      * @param array $uninputs
+     *
      * @return self
+     *
      * @throws ErrorException
      * @throws NoLocationException
      * @throws StateException
@@ -107,9 +112,9 @@ final class CAuth2
             $action = $this->form->getAttribute('action');
             if (isset($action[0])) {
                 if ('/' === $action[0]) {
-                    $action = $this->crawler->getBaseUrl() . $action;
+                    $action = $this->crawler->getBaseUrl().$action;
                 } else {
-                    throw new \Exception("TODO: " . __FILE__ . " L" . __LINE__);
+                    throw new \Exception('TODO: '.__FILE__.' L'.__LINE__);
                 }
             }
         }
@@ -129,6 +134,7 @@ final class CAuth2
 
     /**
      * @param string $message
+     *
      * @return self
      */
     public function write(string $message): self

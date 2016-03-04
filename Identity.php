@@ -1,14 +1,14 @@
 <?php
-declare(strict_types = 1);
+
+declare (strict_types = 1);
 /**
  * Created by PhpStorm.
  * User: AyGLR
  * Date: 23/01/16
- * Time: 21:46
+ * Time: 21:46.
  */
 
 namespace Hoathis\CAuth;
-
 
 final class Identity
 {
@@ -55,6 +55,7 @@ final class Identity
 
     /**
      * @param string $accessToken
+     *
      * @return self
      */
     public function setAccessToken(string $accessToken): self
@@ -74,6 +75,7 @@ final class Identity
 
     /**
      * @param int $expireAt
+     *
      * @return self
      */
     public function setExpireAt(int $expireAt): self
@@ -93,6 +95,7 @@ final class Identity
 
     /**
      * @param int $time
+     *
      * @return bool
      */
     public function willExpiredIn(int $time): bool
@@ -118,6 +121,7 @@ final class Identity
 
     /**
      * @param int $expireIn
+     *
      * @return self
      */
     public function setExpireIn(int $expireIn): self
@@ -137,6 +141,7 @@ final class Identity
 
     /**
      * @param string $refreshToken
+     *
      * @return self
      */
     public function setRefreshToken(string $refreshToken): self
@@ -156,6 +161,7 @@ final class Identity
 
     /**
      * @param string $tokenType
+     *
      * @return self
      */
     public function setTokenType(string $tokenType): self
@@ -164,6 +170,4 @@ final class Identity
 
         return $this;
     }
-
-
 }

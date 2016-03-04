@@ -1,15 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+declare (strict_types = 1);
 
 /**
  * Created by PhpStorm.
  * User: AyGLR
  * Date: 23/01/16
- * Time: 21:45
+ * Time: 21:45.
  */
 
 namespace Hoathis\CAuth;
-
 
 final class Crawler
 {
@@ -61,7 +61,7 @@ final class Crawler
     protected $redirect_uri;
 
     /**
-     * @var  string
+     * @var string
      */
     protected $scope;
 
@@ -76,35 +76,35 @@ final class Crawler
     public function load(): self
     {
         $data = [
-            'client_id'    => $this->client_id,
-            'scope'        => $this->scope,
+            'client_id' => $this->client_id,
+            'scope' => $this->scope,
             'redirect_uri' => $this->redirect_uri,
-            'state'        => $this->_state,
+            'state' => $this->_state,
         ];
-        $link = $this->baseUrl . $this->path . '?' . http_build_query($data);
+        $link = $this->baseUrl.$this->path.'?'.http_build_query($data);
 
         $options = [
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS      => 5,
-            CURLOPT_FORBID_REUSE   => true,
-            CURLOPT_HEADER         => true,
-            CURLOPT_HTTPGET        => true,
-            CURLOPT_NETRC          => false,
-            CURLOPT_POST           => false,
-            CURLOPT_PUT            => false,
+            CURLOPT_MAXREDIRS => 5,
+            CURLOPT_FORBID_REUSE => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPGET => true,
+            CURLOPT_NETRC => false,
+            CURLOPT_POST => false,
+            CURLOPT_PUT => false,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_TIMEOUT => 5,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_URL            => $link,
-            CURLOPT_USERAGENT      => self::$USER_AGENT,
-            CURLOPT_VERBOSE        => true,
+            CURLOPT_URL => $link,
+            CURLOPT_USERAGENT => self::$USER_AGENT,
+            CURLOPT_VERBOSE => true,
         ];
 
         curl_setopt_array($this->curl, $options);
 
         $this->_source = null;
-        $source        = curl_exec($this->curl);
+        $source = curl_exec($this->curl);
 
         list($header, $body) = explode("\r\n\r\n", $source, 2);
 
@@ -114,7 +114,7 @@ final class Crawler
             switch (strtolower($headerName)) {
                 case 'set-cookie':
                     // "Set-Cookie: XEESessionId=k8keh9oicfa5hp0i9tmpmftqm3; path=/; HttpOnly"
-                    $cookieName  = strtok('=');
+                    $cookieName = strtok('=');
                     $cookieValue = strtok(';');
 
                     $this->_cookies[ltrim($cookieName)] = $cookieValue;
@@ -131,7 +131,9 @@ final class Crawler
 
     /**
      * @param string $xpath
+     *
      * @return \SimpleXMLElement
+     *
      * @throws NoFormException
      */
     public function extractSimpleXmlForm(string $xpath = '//form'): \SimpleXMLElement
@@ -149,46 +151,48 @@ final class Crawler
      * @param string $method
      * @param string $action
      * @param array  $data
+     *
      * @return self
+     *
      * @throws ErrorException
      * @throws NoLocationException
      * @throws StateException
      */
     public function submit(string $method, string $action, array $data): self
     {
-        $link       = $action;
+        $link = $action;
         $parameters = http_build_query($data);
-        $cookie     = http_build_query($this->_cookies, '', '; ');
+        $cookie = http_build_query($this->_cookies, '', '; ');
 
         $options = [
             CURLOPT_FOLLOWLOCATION => false,
             // CURLOPT_MAXREDIRS => 5,
-            CURLOPT_FORBID_REUSE   => true,
-            CURLOPT_HEADER         => true,
-            CURLOPT_HTTPGET        => false,
-            CURLOPT_NETRC          => false,
-            CURLOPT_POST           => false,
-            CURLOPT_PUT            => false,
+            CURLOPT_FORBID_REUSE => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPGET => false,
+            CURLOPT_NETRC => false,
+            CURLOPT_POST => false,
+            CURLOPT_PUT => false,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT        => 5,
-            CURLOPT_COOKIE         => $cookie,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_COOKIE => $cookie,
             //CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_URL            => $link,
-            CURLOPT_USERAGENT      => self::$USER_AGENT,
+            CURLOPT_URL => $link,
+            CURLOPT_USERAGENT => self::$USER_AGENT,
             CURLOPT_HTTP200ALIASES => [301, 302],
             // CURLOPT_HTTPHEADER     => [],
         ];
 
         switch ($method) {
             case 'post':
-                $options[CURLOPT_POST]       = true;
+                $options[CURLOPT_POST] = true;
                 $options[CURLOPT_POSTFIELDS] = $parameters;
                 break;
 
             default:
                 $options[CURLOPT_HTTPGET] = true;
-                $options[CURLOPT_URL]     = $link . '?' . $parameters;
+                $options[CURLOPT_URL] = $link.'?'.$parameters;
         }
 
         curl_setopt_array($this->curl, $options);
@@ -226,8 +230,8 @@ final class Crawler
     public function __construct()
     {
         $this->_cookies = [];
-        $this->curl     = curl_init();
-        $this->_state   = hash('SHA512', openssl_random_pseudo_bytes(1024));
+        $this->curl = curl_init();
+        $this->_state = hash('SHA512', openssl_random_pseudo_bytes(1024));
     }
 
     /**
@@ -240,6 +244,7 @@ final class Crawler
 
     /**
      * @param string $state
+     *
      * @return self
      */
     public function setState(string $state): self
@@ -259,6 +264,7 @@ final class Crawler
 
     /**
      * @param string $baseUrl
+     *
      * @return self
      */
     public function setBaseUrl(string $baseUrl): self
@@ -278,6 +284,7 @@ final class Crawler
 
     /**
      * @param string $path
+     *
      * @return self
      */
     public function setPath(string $path): self
@@ -289,6 +296,7 @@ final class Crawler
 
     /**
      * @param string $url
+     *
      * @return self
      */
     public function setUrl(string $url): self
@@ -310,7 +318,7 @@ final class Crawler
      */
     public function getUrl(): string
     {
-        return $this->getBaseUrl() . $this->getPath();
+        return $this->getBaseUrl().$this->getPath();
     }
 
     /**
@@ -323,6 +331,7 @@ final class Crawler
 
     /**
      * @param string $client_id
+     *
      * @return self
      */
     public function setClientId(string $client_id): self
@@ -342,6 +351,7 @@ final class Crawler
 
     /**
      * @param string $redirect_uri
+     *
      * @return self
      */
     public function setRedirectUri(string $redirect_uri): self
@@ -361,6 +371,7 @@ final class Crawler
 
     /**
      * @param string $scope
+     *
      * @return self
      */
     public function setScope(string $scope): self
