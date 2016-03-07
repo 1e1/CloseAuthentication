@@ -10,7 +10,7 @@ declare (strict_types = 1);
 
 namespace Hoathis\CAuth;
 
-final class OAuth2
+final class OAuth2 extends AbstractCurl
 {
     const DEFAULT_METHOD = 'post';
     const MARGIN_TIME = 30;
@@ -24,11 +24,6 @@ final class OAuth2
      * @var string
      */
     private $_clientSecret;
-
-    /**
-     * @var resource
-     */
-    protected $curl;
 
     /**
      * @var Identity
@@ -55,15 +50,7 @@ final class OAuth2
 
     public function __construct()
     {
-        $this->curl = curl_init();
-    }
-
-    /**
-     *
-     */
-    public function __destruct()
-    {
-        curl_close($this->curl);
+        parent::__construct();
     }
 
     /**
@@ -121,21 +108,9 @@ final class OAuth2
         $parameters = http_build_query($data);
 
         $options = [
-            CURLOPT_FOLLOWLOCATION => true,
-            // CURLOPT_MAXREDIRS => 5,
-            CURLOPT_FORBID_REUSE => true,
             CURLOPT_HEADER => false,
             CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-            CURLOPT_HTTPGET => false,
-            CURLOPT_NETRC => false,
-            CURLOPT_POST => false,
-            CURLOPT_PUT => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT => 5,
-            //CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_URL => $link,
-            //CURLOPT_USERAGENT      => self::$USER_AGENT,
             CURLOPT_USERPWD => $credentials,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/x-www-form-urlencoded',
@@ -153,9 +128,12 @@ final class OAuth2
                 $options[CURLOPT_URL] = $link.'?'.$parameters;
         }
 
-        curl_setopt_array($this->curl, $options);
-
-        $source = curl_exec($this->curl);
+        $source = $this
+            ->reset()
+            ->addOptions($options)
+            ->filterOptions()
+            ->exec()
+        ;
 
         /*
 {

@@ -11,14 +11,9 @@ declare (strict_types = 1);
 
 namespace Hoathis\CAuth;
 
-final class Crawler
+final class Crawler extends AbstractCurl
 {
     const STATE_HASH = 'SHA512';
-
-    /**
-     * @var string
-     */
-    public static $USER_AGENT = 'Hoa Crawler';
 
     /**
      * @var string
@@ -66,11 +61,6 @@ final class Crawler
     protected $scope;
 
     /**
-     * @var resource
-     */
-    protected $curl;
-
-    /**
      * @return self
      */
     public function load(): self
@@ -84,27 +74,15 @@ final class Crawler
         $link = $this->baseUrl.$this->path.'?'.http_build_query($data);
 
         $options = [
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5,
-            CURLOPT_FORBID_REUSE => true,
-            CURLOPT_HEADER => true,
             CURLOPT_HTTPGET => true,
-            CURLOPT_NETRC => false,
-            CURLOPT_POST => false,
-            CURLOPT_PUT => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT => 5,
-            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_URL => $link,
-            CURLOPT_USERAGENT => self::$USER_AGENT,
-            CURLOPT_VERBOSE => true,
         ];
 
-        curl_setopt_array($this->curl, $options);
-
-        $this->_source = null;
-        $source = curl_exec($this->curl);
+        $source = $this
+            ->reset()
+            ->addOptions($options)
+            ->filterOptions()
+            ->exec();
 
         list($header, $body) = explode("\r\n\r\n", $source, 2);
 
@@ -160,28 +138,17 @@ final class Crawler
      */
     public function submit(string $method, string $action, array $data): self
     {
+        $location = null;
         $link = $action;
         $parameters = http_build_query($data);
         $cookie = http_build_query($this->_cookies, '', '; ');
 
         $options = [
             CURLOPT_FOLLOWLOCATION => false,
-            // CURLOPT_MAXREDIRS => 5,
-            CURLOPT_FORBID_REUSE => true,
-            CURLOPT_HEADER => true,
-            CURLOPT_HTTPGET => false,
-            CURLOPT_NETRC => false,
-            CURLOPT_POST => false,
-            CURLOPT_PUT => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 1,
-            CURLOPT_TIMEOUT => 5,
+            CURLOPT_MAXREDIRS => null,
             CURLOPT_COOKIE => $cookie,
-            //CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_URL => $link,
-            CURLOPT_USERAGENT => self::$USER_AGENT,
             CURLOPT_HTTP200ALIASES => [301, 302],
-            // CURLOPT_HTTPHEADER     => [],
         ];
 
         switch ($method) {
@@ -195,14 +162,29 @@ final class Crawler
                 $options[CURLOPT_URL] = $link.'?'.$parameters;
         }
 
-        curl_setopt_array($this->curl, $options);
-
         $this->_code = null;
-        /*$source      =*/
-        curl_exec($this->curl);
-        $location = curl_getinfo($this->curl, CURLINFO_REDIRECT_URL);
+        $source = $this
+            ->reset()
+            ->addOptions($options)
+            ->filterOptions()
+            ->exec();
 
-        if (false === $location) {
+        list($header, $body) = explode("\r\n\r\n", $source, 2);
+
+        $headers = explode("\r\n", $header);
+        foreach ($headers as $header) {
+            $headerName = strtok($header, ':');
+            switch (strtolower($headerName)) {
+                case 'location':
+                    // "Location: http://*/../?x=y"
+                    $redirection = strtok("\r");
+
+                    $location = $redirection;
+                    break;
+            }
+        }
+
+        if (null === $location) {
             throw new NoLocationException();
         }
 
@@ -229,17 +211,11 @@ final class Crawler
      */
     public function __construct()
     {
-        $this->_cookies = [];
-        $this->curl = curl_init();
-        $this->_state = hash('SHA512', openssl_random_pseudo_bytes(1024));
-    }
+        parent::__construct();
 
-    /**
-     *
-     */
-    public function __destruct()
-    {
-        curl_close($this->curl);
+        $this->_cookies = [];
+
+        $this->_state = hash('SHA512', openssl_random_pseudo_bytes(1024));
     }
 
     /**
