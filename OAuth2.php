@@ -54,12 +54,31 @@ final class OAuth2 extends AbstractCurl
     }
 
     /**
+     * @param array  $credentials
+     * @param string $method
+     *
+     * @return self
+     */
+    public function authenticateByPassword(array $credentials, string $method = self::DEFAULT_METHOD): self
+    {
+        $data = [
+            'grant_type' => 'password',
+            'client_id' => $this->_clientId,
+            'client_secret' => $this->_clientSecret,
+        ];
+
+        $this->loadIdentity($data + $credentials, $method);
+
+        return $this;
+    }
+
+    /**
      * @param string $code
      * @param string $method
      *
      * @return self
      */
-    public function authenticate(string $code, string $method = self::DEFAULT_METHOD): self
+    public function authenticateByCode(string $code, string $method = self::DEFAULT_METHOD): self
     {
         $data = [
             'grant_type' => 'authorization_code',
@@ -69,6 +88,19 @@ final class OAuth2 extends AbstractCurl
         $this->loadIdentity($data, $method);
 
         return $this;
+    }
+
+    /**
+     * @deprecated
+     *
+     * @param string $code
+     * @param string $method
+     *
+     * @return self
+     */
+    public function authenticate(string $code, string $method = self::DEFAULT_METHOD): self
+    {
+        return $this->authenticateByCode($code, $method);
     }
 
     /**
@@ -142,16 +174,28 @@ final class OAuth2 extends AbstractCurl
     "expires_in": 3600,
     "refresh_token": "8eb667707535655f2d9e14fc6491a59f6e06f2e73170761259907d8de186b6a1",
     "token_type": "bearer"
+    "scope" : null
 }
          */
 
         $identity = json_decode($source, true);
         $this->identity
             ->setAccessToken($identity['access_token'])
-            ->setExpireAt((int) $identity['expires_at'])
             ->setExpireIn((int) $identity['expires_in'])
-            ->setRefreshToken($identity['refresh_token'])
             ->setTokenType($identity['token_type']);
+
+        if (isset($identity['refresh_token'])) {
+            $this->identity
+                ->setRefreshToken($identity['refresh_token']);
+        }
+
+        if (isset($identity['expires_at'])) {
+            $this->identity
+                ->setExpireAt((int) $identity['expires_at']);
+        } else {
+            $this->identity
+                ->setExpireAt(time() + $this->identity->getExpireIn());
+        }
 
         return $this;
     }
